@@ -11,4 +11,4 @@ from src.state.login import LoginState
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.set_state(LoginState.unauthorized)
 
-    await message.answer("Старт бота")
+    await message.answer('Спасибо что пришли')

@@ -7,6 +7,7 @@ from redis.asyncio.client import Redis
 
 from src.handlers.login.router import login_router
 from src.handlers.main.router import main_router
+from src.handlers.products.router import products_router
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,6 +24,7 @@ dp = Dispatcher(storage=storage)
 
 dp.include_routers(main_router)
 dp.include_routers(login_router)
+dp.include_routers(products_router)
 
 
 async def main():
