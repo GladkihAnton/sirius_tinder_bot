@@ -11,7 +11,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from src.buttons.help.getter import RANDOM_BUTTON
 from src.buttons.products.feedback import get_feedback_buttons
-from src.conf.config import settings
+from conf.config import settings
 from src.handlers.login.router import login_router
 from src.handlers.products.router import products_router
 from src.state.login import LoginState

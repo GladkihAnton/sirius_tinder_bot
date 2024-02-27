@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import types
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext

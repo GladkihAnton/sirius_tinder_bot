@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 
 from src.buttons.help.getter import get_keyboard
-from src.conf.config import settings
+from conf.config import settings
 from src.handlers.login.router import login_router
 from src.state.login import LoginState
 
