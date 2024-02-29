@@ -14,5 +14,6 @@ class Settings(BaseSettings):
     REDIS_PASSWORD: str
     REDIS_DB: int = 0
 
+    LOG_LEVEL: str = ''
 
 settings = Settings()

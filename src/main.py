@@ -8,11 +8,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.tg.router import tg_router
 from src.integrations.tg_bot import bot
+from src.middleware.logger import LogServerMiddleware
+from src.on_startup.logger import setup_logger
 from src.on_startup.webhook import setup_webhook
 from src.utils.background_tasks import tg_background_tasks
 
 
 def setup_middleware(app: FastAPI) -> None:
+    app.add_middleware(
+        LogServerMiddleware,
+    )
     # CORS Middleware should be the last.
     # See https://github.com/tiangolo/fastapi/issues/1663 .
     app.add_middleware(
@@ -32,6 +37,7 @@ def setup_routers(app: FastAPI) -> None:
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     print('START APP')
     await setup_webhook(bot)
+    setup_logger()
 
     yield
 

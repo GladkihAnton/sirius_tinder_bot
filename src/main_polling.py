@@ -1,9 +1,8 @@
 import asyncio
-import logging
 
 from src.integrations.tg_bot import get_dispatcher, get_tg_bot
-
-logging.basicConfig(level=logging.INFO)
+from src.logger import logger
+from src.on_startup.logger import setup_logger
 
 
 async def start_polling() -> None:
@@ -11,7 +10,9 @@ async def start_polling() -> None:
     dp = get_dispatcher()
 
     await bot.delete_webhook()
-    logging.info('Deleted webhook')
+    logger.info('Deleted webhook')
+
+    setup_logger()
 
     await dp.start_polling(bot)
 
