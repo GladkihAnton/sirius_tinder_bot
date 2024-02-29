@@ -1,50 +1,53 @@
 import asyncio
 import logging
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
 
-from aiogram import Bot, Dispatcher
-from aiogram.fsm.storage.redis import RedisStorage
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from conf.config import settings
-from src.db.redis import redis
-from src.handlers.login.router import login_router
-from src.handlers.main.router import main_router
-from src.handlers.products.router import products_router
-
-logging.basicConfig(level=logging.INFO)
-
+from src.api.tg.router import tg_router
+from src.integrations.tg_bot import bot
+from src.on_startup.webhook import setup_webhook
+from src.utils.background_tasks import tg_background_tasks
 
 
-def setup_dispatchers(bot: Bot) -> Dispatcher:
-    storage = RedisStorage(redis)
-    dp = Dispatcher(storage=storage, bot=bot)
-
-    dp.include_routers(main_router)
-    dp.include_routers(login_router)
-    dp.include_routers(products_router)
-
-    return dp
-
-
-async def setup_tg(bot_: Bot, dp_: Dispatcher) -> None:
-    logging.info('Setup Telegram')
-
-    webhook = await bot_.get_webhook_info()
-    if webhook.url != settings.WEBHOOK_URL:
-        logging.info('Delete webhook')
-        await bot_.delete_webhook()
-
-    if settings.WEBHOOK_URL:
-        logging.info('Set webhook')
-        await bot_.set_webhook(settings.WEBHOOK_URL)
-    else:
-        await dp_.start_polling(bot_)
-
-    logging.info('Finish setup')
+def setup_middleware(app: FastAPI) -> None:
+    # CORS Middleware should be the last.
+    # See https://github.com/tiangolo/fastapi/issues/1663 .
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=['*'],
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*'],
+    )
 
 
-bot = Bot(token=settings.BOT_TOKEN)
-dp = setup_dispatchers(bot)
+def setup_routers(app: FastAPI) -> None:
+    app.include_router(tg_router)
 
-if __name__ == "__main__":
-    asyncio.run(setup_tg(bot, dp))
 
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    print('START APP')
+    await setup_webhook(bot)
+
+    yield
+
+    logging.info('Stopping')
+
+    while len(tg_background_tasks)>0:
+        logging.info('%s tasks left', len(tg_background_tasks))
+        await asyncio.sleep(0)
+
+    logging.info('Stopped')
+
+
+def create_app() -> FastAPI:
+    app = FastAPI(docs_url='/swagger', lifespan=lifespan)
+
+    setup_middleware(app)
+    setup_routers(app)
+
+    return app
