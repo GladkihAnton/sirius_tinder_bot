@@ -1,9 +1,11 @@
 import asyncio
 import logging
+from asyncio import Task
+from typing import Any
 
+from aiogram import Bot, Dispatcher, types
 from fastapi import Depends
 from fastapi.responses import ORJSONResponse
-from aiogram import types, Bot, Dispatcher
 from starlette.requests import Request
 
 from src.api.tg.router import tg_router
@@ -21,7 +23,7 @@ async def tg_api(
     data = await request.json()
     update = types.Update(**data)
 
-    task = asyncio.create_task(dp.feed_webhook_update(bot, update))
+    task: Task[Any] = asyncio.create_task(dp.feed_webhook_update(bot, update))
     tg_background_tasks.add(task)
 
     logging.info(len(tg_background_tasks))

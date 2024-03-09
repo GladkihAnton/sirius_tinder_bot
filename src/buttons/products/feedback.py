@@ -7,12 +7,12 @@ def get_feedback_buttons() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.add(
         types.InlineKeyboardButton(
-            text="👍",
-            callback_data="like",
+            text='👍',
+            callback_data='like',
         ),
         types.InlineKeyboardButton(
-            text="👎",
-            callback_data="dislike",
-        )
+            text='👎',
+            callback_data='dislike',
+        ),
     )
     return builder.as_markup()

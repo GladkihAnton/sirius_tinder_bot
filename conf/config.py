@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic_settings import BaseSettings
 
 
@@ -15,5 +13,8 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
 
     LOG_LEVEL: str = ''
+
+    RETRY_COUNT: int = 3
+
 
 settings = Settings()

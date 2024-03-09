@@ -1,7 +1,8 @@
 import logging.config
 
-from conf.config import settings
 from src.logger import LOGGING_CONFIG, logger
+
+from conf.config import settings
 
 
 def setup_logger() -> None:

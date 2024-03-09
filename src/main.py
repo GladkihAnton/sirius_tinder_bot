@@ -22,10 +22,10 @@ def setup_middleware(app: FastAPI) -> None:
     # See https://github.com/tiangolo/fastapi/issues/1663 .
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=['*'],
-        allow_credentials=True,
-        allow_methods=['*'],
-        allow_headers=['*'],
+        allow_origins=['*'],  # type: ignore
+        allow_credentials=True,  # type: ignore
+        allow_methods=['*'],  # type: ignore
+        allow_headers=['*'],  # type: ignore
     )
 
 
@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     logging.info('Stopping')
 
-    while len(tg_background_tasks)>0:
+    while len(tg_background_tasks) > 0:
         logging.info('%s tasks left', len(tg_background_tasks))
         await asyncio.sleep(0)
 
