@@ -5,6 +5,7 @@ from aiohttp.typedefs import LooseHeaders
 from multidict import CIMultiDict
 
 from src.logger import correlation_id_ctx, logger
+from src.middleware.auth import access_token_cxt
 
 from conf.config import settings
 
@@ -22,8 +23,16 @@ class ClientSessionWithCorrId(aiohttp.ClientSession):
 async def do_request(
     url: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None
 ) -> Any:
+    try:
+        headers_ = {'Authorization': f'Bearer {access_token_cxt.get()}'}
+    except LookupError:
+        headers_ = {}
+
     timeout = aiohttp.ClientTimeout(total=3)
     connector = aiohttp.TCPConnector()
+
+    if headers is not None:
+        headers_.update(headers)
 
     final_exc = None
     async with ClientSessionWithCorrId(connector=connector, timeout=timeout) as session:
@@ -31,7 +40,7 @@ async def do_request(
             try:
                 async with session.post(
                     url,
-                    headers=headers,
+                    headers=headers_,
                     json=params,
                 ) as response:
                     response.raise_for_status()
