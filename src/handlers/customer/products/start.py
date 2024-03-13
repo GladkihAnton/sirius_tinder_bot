@@ -5,7 +5,7 @@ from aiohttp import ClientResponseError
 
 from src.buttons.help.getter import RANDOM_BUTTON
 from src.buttons.products.feedback import get_feedback_buttons
-from src.handlers.products.router import products_router
+from src.handlers.customer.products.router import products_router
 from src.logger import logger
 from src.template.render import render
 from src.utils.request import do_request
@@ -17,7 +17,7 @@ from conf.config import settings
 async def start_random(message: types.Message, state: FSMContext) -> None:
     try:
         data = await do_request(
-            f'{settings.TINDER_BACKEND_HOST}/product/get_random_product',
+            f'{settings.TINDER_BACKEND_HOST}/customer/product/get_random_product',
         )
     except ClientResponseError:
         await message.answer('Ваш код неверный')
@@ -63,7 +63,7 @@ async def dislike_handler(callback: types.CallbackQuery, state: FSMContext) -> N
 async def _send_feedback(product_id: int, feedback: str) -> None:
     try:
         await do_request(
-            f'{settings.TINDER_BACKEND_HOST}/product/feedback',
+            f'{settings.TINDER_BACKEND_HOST}/customer/product/feedback',
             params={'product_id': product_id, 'status': feedback},
         )
     except ClientResponseError:

@@ -31,8 +31,7 @@ async def enter_code(message: types.Message, state: FSMContext) -> None:
         await message.answer('Ваш код неверный')
         return
 
-    access_token = data['access_token']
 
-    await state.set_data({'access_token': access_token})
+    await state.set_data(data)
     await state.set_state(None)
     await message.answer('Успешно авторизованы', reply_markup=get_keyboard())
