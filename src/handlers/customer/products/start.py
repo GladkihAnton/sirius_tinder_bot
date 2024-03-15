@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiohttp import ClientResponseError
 
-from src.buttons.help.getter import RANDOM_BUTTON
+from src.buttons.help.getter import RANDOM_BUTTON, get_main_keyboard
 from src.buttons.products.feedback import get_feedback_buttons
 from src.handlers.customer.products.router import products_router
 from src.logger import logger
@@ -39,12 +39,15 @@ async def start_random(message: types.Message, state: FSMContext) -> None:
 
 @products_router.callback_query(F.data == 'like')
 async def like_handler(callback: types.CallbackQuery, state: FSMContext) -> None:
-    data = await state.get_data()
+    data = await state.update_data({'has_already_liked': True})
     await _send_feedback(data['product_id'], 'liked')
 
     match callback.message:
         case Message():
-            await callback.message.answer(str(data['product_id']))
+            await callback.message.answer(
+                str(data['product_id']),
+                reply_markup=get_main_keyboard(has_already_liked=True),
+            )
             await callback.message.delete()
 
 

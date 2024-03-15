@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiohttp.client_exceptions import ClientResponseError
 
-from src.buttons.help.getter import get_keyboard
+from src.buttons.help.getter import get_main_keyboard
 from src.handlers.login.router import login_router
 from src.logger import logger
 from src.state.login import LoginState
@@ -31,7 +31,7 @@ async def enter_code(message: types.Message, state: FSMContext) -> None:
         await message.answer('Ваш код неверный')
         return
 
-
-    await state.set_data(data)
+    data = await state.update_data(data)
     await state.set_state(None)
-    await message.answer('Успешно авторизованы', reply_markup=get_keyboard())
+
+    await message.answer('Успешно авторизованы', reply_markup=get_main_keyboard(data.get('has_already_liked', False)))
