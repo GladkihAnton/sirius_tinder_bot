@@ -21,7 +21,7 @@ class ClientSessionWithCorrId(aiohttp.ClientSession):
 
 
 async def do_request(
-    url: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None
+    url: str, params: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, Any]] = None, method: str = 'POST'
 ) -> Any:
     try:
         headers_ = {'Authorization': f'Bearer {access_token_cxt.get()}'}
@@ -38,7 +38,8 @@ async def do_request(
     async with ClientSessionWithCorrId(connector=connector, timeout=timeout) as session:
         for _ in range(settings.RETRY_COUNT):
             try:
-                async with session.post(
+                async with session.request(
+                    method,
                     url,
                     headers=headers_,
                     json=params,

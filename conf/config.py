@@ -16,5 +16,6 @@ class Settings(BaseSettings):
 
     RETRY_COUNT: int = 3
 
+    MAX_DELIVERY_WAIT_TIME: int = 60 * 10
 
 settings = Settings()

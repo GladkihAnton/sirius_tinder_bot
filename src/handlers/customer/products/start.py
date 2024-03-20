@@ -46,7 +46,7 @@ async def like_handler(callback: types.CallbackQuery, state: FSMContext) -> None
         case Message():
             await callback.message.answer(
                 str(data['product_id']),
-                reply_markup=get_main_keyboard(has_already_liked=True),
+                reply_markup=get_main_keyboard(data['role'], has_already_liked=True),
             )
             await callback.message.delete()
 

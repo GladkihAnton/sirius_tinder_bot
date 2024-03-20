@@ -34,4 +34,7 @@ async def enter_code(message: types.Message, state: FSMContext) -> None:
     data = await state.update_data(data)
     await state.set_state(None)
 
-    await message.answer('Успешно авторизованы', reply_markup=get_main_keyboard(data.get('has_already_liked', False)))
+    await message.answer(
+        'Успешно авторизованы',
+        reply_markup=get_main_keyboard(data['role'], has_already_liked=data.get('has_already_liked', False)),
+    )
